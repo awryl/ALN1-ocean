@@ -1,0 +1,104 @@
+Please add in your .cshrc and .login files:
+===========================================
+source /mnt/n7fs/ens/tp_guivarch/opt/intel/Compiler/11.0/083/bin/ifortvars.csh intel64
+setenv LD_LIBRARY_PATH $LD_LIBRARY_PATH":/mnt/n7fs/ens/tp_guivarch/opt/libstd/usr/lib/"
+setenv LD_RUN_PATH $LD_LIBRARY_PATH
+
+
+
+Description of codes that have been provided:
+============================================
+
+I/ Matlab files related to EOF scenario:
+   ====================================
+  1/ EOF.m (TO BE WRITTEN)
+     The EOF.m developed during the first phase 
+     has to be adpated to implement
+     the scenario given in Section 2 of Phase 2 document.
+ 
+  2/ gendata.m and Kaplan.mat are related to data file
+     (must not be modified)
+
+
+   Note that the example provided in the matlab code subspace.m 
+        can be used as a model 
+        to modify EOF.m to call directly from Matlab the subspace codes 
+        written in FORTRAN.
+
+
+
+II/ FORTRAN related block power method versions (code and testing)
+    ==============================================================
+
+Only subspace_iter.f90 needs be modified. 
+All other files are designed either help validating the 
+developed code either in FORTRAN or in matlab.
+
+  1. m_subspace_iter.f90 (TO BE WRITTEN)
+     This file should contain the implementation 
+     of the three variants of the subspace
+     iteration method as described in Section 3.
+     (please note that routines decribed in Section 6
+      DGEMM and DSYEV can be very useful)
+
+  2. subspace_iter.f90 (must not be modified) 
+     subroutine that wraps the three routines related to the three
+     different versions of the subspace iteration method.
+
+  3. TESTING in FORTRAN :
+
+     3.1 main.f90 (must not be modified)
+         FORTRAN driver to test all three versions of the 
+         code on synthetic data for which one can provide
+          -p (block-product size),
+             used in Version 2 only. p is the size of the block
+             used to accelerate the method
+          - n (dimension of the matrix a)
+          - m (dimension of the invariant subspace)
+          - Percentage (the percentage of the trace needed) 
+     3.2 makefile used to compile 
+          m_subspace_iter.f90 subspace_iter.f90 and main.f90
+          then to generate executable "main":
+          Type:
+          > make
+          > ./main
+
+  4. Testing subspace module in matlab
+
+      Subspace module can be used thanks to 
+      the mex_subspace_iter.F90 which defines the matlab interface.
+      subspace.m then illustrate how to call the subspace module directly
+      from matlab.
+
+     4.1 matlab interface is defined in mex_subspace_iter.f90
+         (must not be modified)
+
+       matlab interface:
+         !    [vout, w, res_ev, it_ev, it, n_ev]
+         !  = mex_subspace_iter(version, a, p, v, percentage, maxit, eps)
+
+         ! version      0,1,2 depending on the version to be called
+         ! a            input matrix
+         ! p            number of products to perform before reorthogonalizing
+         ! v            initial guess for the subspace
+         ! percentage   fraction of the trace to the recover
+         ! maxit        maximum number of iterations
+         ! eps          tolerance for the stopping criterion
+         !
+         ! ouput:
+         ! vout         computed eigenvectors
+         ! w            computed eigenvalues
+         ! res_ev       residual for each eigenvector (except for version 0)
+         ! it_ev        number of iterations for each eigenvector
+         ! it           total number of iterations
+         ! n_ev         number of converged eigenpairs
+
+     4.2 subspace.m : provides an example of use of the matlab interface 
+         (mex_subspace_iter) on synthetic data
+         (must not be modified).
+         Note that the example provided in the matlab code can
+         be used as a model 
+         to modify EOF.m to experiment the subspace codes on real data
+
+
+     
